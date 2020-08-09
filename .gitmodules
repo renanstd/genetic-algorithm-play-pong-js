@@ -1,0 +1,3 @@
+[submodule "pong-js"]
+	path = pong-js
+	url = https://github.com/renanstd/pong-js
