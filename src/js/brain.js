@@ -17,12 +17,12 @@ let chromosome_c = Math.random();
  */
 function think() {
     let soma = 0;
-    // Multiplico os valores de entrada por 100 para normalizar
-    soma += ball_position.x / 1000 * chromosome_a;
-    soma += ball_position.y / 1000 * chromosome_b;
-    soma += ball_speed / 1000 * chromosome_c;
+    // Divido o valor de input pelo seu limite máximo para normalizar entre 0 e 1
+    soma += ball_position.x / 600 * chromosome_a;
+    soma += ball_position.y / 600 * chromosome_b;
+    soma += ball_speed / 103 * chromosome_c;
 
-    // Divido 1.0 por 3 para termos assim 3 possíveis outputs
+    // Divido 1.0 por 3 para termos assim 3 possíveis outputs em faixas de 0.33 cada
     if (soma <= 0.33) {
         move_pad_left();
     } else if (soma > 0.33 && soma <= 0.66) {
