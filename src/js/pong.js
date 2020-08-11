@@ -163,6 +163,7 @@ function draw_pad() {
 function draw() {
     if (is_game_over) {return;}
     clean_canvas();
+    think();
     detect_border_collision();
     detect_top_collision();
     detect_pad_collision();
