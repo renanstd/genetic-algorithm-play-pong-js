@@ -25,6 +25,7 @@ class Individual
     }
 }
 
+
 /**
  * Cria uma população inicial de indivíduos, com cromossomos feitos
  * de valores aleatórios.
@@ -45,6 +46,7 @@ function create_initial_population() {
     return population;
 }
 
+
 /**
  * Função responsável por calcular o fitness de toda uma população.
  * O fitness no nosso caso é bem simples, é o score que o indivíduo
@@ -59,6 +61,7 @@ function calculate_fitness(population) {
         element.fitness = element.score;
     }
 }
+
 
 /**
  * Função que realiza a seleção dos melhores indivíduos de uma
@@ -89,6 +92,7 @@ function selection(population) {
     return selected;
 }
 
+
 /**
  * Realiza o cruzamento entre 2 indivíduos, e retorna o filho deles
  *
@@ -103,6 +107,7 @@ function crossover(father, mother) {
     new_chromossome.push(father.chromossomes[2]);
     return new Individual(new_chromossome);
 }
+
 
 /**
  * Realiza a mutação de algum gene de um indivíduo.
@@ -125,6 +130,7 @@ function mutation(individual) {
     }
     return new Individual(mutated_chromossomes);
 }
+
 
 // Helper functions -------------------------------------------------
 /**
