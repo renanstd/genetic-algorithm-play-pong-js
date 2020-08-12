@@ -33,6 +33,22 @@ function think() {
 }
 
 const population = create_initial_population();
+
+// Insiro uns valores fictícios de score só para teste (apagar depois)
+for (let i = 0; i < population.length; i++) {
+    const element = population[i];
+    element.score = Math.floor(Math.random() * 20 - 1) + 1;
+}
+
 console.log(population);
 
 calculate_fitness(population);
+const selected_a = selection(population);
+const selected_b = selection(population);
+const children = crossover(selected_a, selected_b);
+const mutated_children = mutation(children);
+
+console.log(selected_a);
+console.log(selected_b);
+console.log(children);
+console.log(mutated_children);

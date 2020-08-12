@@ -2,7 +2,8 @@
 const chromossome_size = 3;
 const population_size = 10;
 const max_generations = 500;
-const selection_method = 'roulette_wheel';
+const selection_method = 'tournament_selection';
+const tournament_size = 3;
 const crossover_probability = 0.9; // 90%
 const mutation_probability = 0.05; // 05%
 // ------------------------------------------------------------------
@@ -23,7 +24,10 @@ class Individual
 }
 
 /**
- * Cria uma população inicial com valores aleatórios.
+ * Cria uma população inicial de indivíduos, com cromossomos feitos
+ * de valores aleatórios.
+ *
+ * @returns {Individual[]} Nova população de indivíduos
  */
 function create_initial_population() {
     const population = [];
@@ -57,16 +61,79 @@ function calculate_fitness(population) {
 /**
  * Função que realiza a seleção dos melhores indivíduos de uma
  * população
+ * O modo que utilizaremos neste exemplo, é o 'tournament_selection',
+ * este método funciona selecionando sempre os X indivíduos com maior
+ * fitness de cada população.
+ *
  * @param {Individual[]} population Um array de indivíduos
+ * @returns {Individual} Indivíduo escolhido
  */
 function selection(population) {
-
+    let selected;
+    if (selection_method == 'tournament_selection') {
+        const selected_individuals = [];
+        // Seleciona X indivíduos aleatórios da população
+        for (let i = 0; i < tournament_size; i++) {
+            const random_index = random_int_between(0, population_size);
+            selected_individuals.push(population[random_index]);
+        }
+        // Ordena esses X indivíduos pelo seu fitness
+        const ordered_individuals = selected_individuals.sort(function(a, b) {
+            return b.fitness - a.fitness;
+        });
+        // Seleciona o indivíduo que ficou em primeiro lugar nesse ranking
+        selected = ordered_individuals[0];
+    }
+    return selected;
 }
 
+/**
+ * Realiza o cruzamento entre 2 indivíduos, e retorna o filho deles
+ *
+ * @param {Individual} father Indivíduo A
+ * @param {Individual} mother Indivíduo B
+ * @returns {Individual} Filho resultante
+ */
 function crossover(father, mother) {
-
+    const new_chromossome = [];
+    new_chromossome.push(father.chromossomes[0]);
+    new_chromossome.push(mother.chromossomes[1]);
+    new_chromossome.push(father.chromossomes[2]);
+    return new Individual(new_chromossome);
 }
 
+/**
+ * Realiza a mutação de algum gene de um indivíduo.
+ * Cada gene do cromossono possui uma chance X de sofrer mutação.
+ * Caso aconteça, o valor deste gene é substituído por outro valor
+ * aleatório entre 0 e 1.
+ *
+ * @param {Individual} individual O indivíduo que será mutado
+ * @returns {Individual} Um novo indivíduo, com as mutações sofridas
+ */
 function mutation(individual) {
+    const mutated_chromossomes = [];
+    for (let i = 0; i < chromossome_size; i++) {
+        const gene_selected = Math.random() < mutation_probability;
+        if (gene_selected) {
+            mutated_chromossomes.push(Math.random());
+            console.log('mutate!');
+        }
+        mutated_chromossomes.push(individual.chromossomes[i]);
+    }
+    return new Individual(mutated_chromossomes);
+}
 
+// Helper functions -------------------------------------------------
+/**
+ * Retorna um número aleatório entre o valor mínimo e máximo
+ *
+ * @param {int} min Valor mínimo
+ * @param {int} max Valor máximo
+ * @returns {int} Valor aleatório
+ */
+function random_int_between(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
 }
