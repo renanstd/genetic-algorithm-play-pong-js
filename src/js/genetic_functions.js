@@ -10,7 +10,9 @@ const mutation_probability = 0.05; // 05%
 
 /**
  * Classe que representa um indivíduo, que será inserido no
- * cérebro para jogar para ver qual sua pontuação no jogo.
+ * cérebro para jogar o pong.
+ * Cada indivíduo possui um cromossomo, que por sua vez é um
+ * conjunto de 3 genes.
  * Cada indivíduo possui uma variável para guardar sua pontuação
  * no jogo, e uma variável para armazenar seu valor de fitness.
  */
