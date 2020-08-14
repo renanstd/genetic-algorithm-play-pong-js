@@ -1,43 +1,148 @@
+class Ball
+{
+    constructor(color, layer, pad) {
+        this.position = {
+            x: canvas.width / 2,
+            y: 50
+        };
+        this.speed = 3;
+        this.direction = {
+            x: Math.random() < 0.5 ? -1 : 1,
+            y: 1
+        };
+        this.color = color;
+        this.layer = layer;
+        this.size = [10, 10];
+        this.can_bounce = false;
+        this.pad = pad;
+        this.score = 0;
+        this.is_game_over = false;
+    };
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.position.x, this.position.y, ...this.size);
+    }
+
+    move_ball() {
+        this.position.x = this.position.x + this.speed * this.direction.x;
+        this.position.y = this.position.y + this.speed * this.direction.y;
+    };
+
+    bounce_ball_horizontally() {
+        this.direction.x = -this.direction.x;
+    };
+
+    bounce_ball_vertically() {
+        this.direction.y = -this.direction.y;
+    };
+
+    increase_score() {
+        this.score += 1;
+        document.getElementById('score').innerHTML = this.score;
+    }
+
+    increase_speed() {
+        this.speed += 0.5;
+    };
+
+    detect_border_collision() {
+        const right_limit = canvas.width - this.size[0]
+        if (this.position.x < 0 || this.position.x > right_limit) {
+            this.bounce_ball_horizontally();
+            this.can_bounce = true;
+        }
+    }
+
+    detect_top_collision() {
+        if (this.position.y < 0) {
+            this.bounce_ball_vertically();
+        }
+    }
+
+    detect_pad_collision() {
+        if (
+            this.can_bounce &&
+            this.position.y + this.size[1] > this.pad.position.y &&
+            this.position.y < pad.position.y + this.pad.size[1] &&
+            this.position.x > pad.position.x &&
+            this.position.x < pad.position.x + this.pad.size[0]
+        ) {
+            this.can_bounce = false;
+            this.bounce_ball_vertically();
+            this.increase_speed();
+            this.increase_score();
+        }
+    }
+
+    detect_game_over() {
+        if (this.position.y > canvas.height) {
+            this.game_over();
+        }
+    }
+
+    game_over() {
+        this.is_game_over = true;
+        document.getElementById("final-score").innerText = this.score;
+        document.getElementById("game-over").style = "display : inline";
+        document.getElementById("play-again").focus();
+    }
+}
+
+
+class Pad
+{
+    constructor(color, layer) {
+        this.position = {
+            x: canvas.width / 2,
+            y: 550
+        };
+        this.color = color;
+        this.layer = layer;
+        this.size = [100, 20];
+        this.limit_left = 0;
+        this.limit_right = canvas.width - this.size[0];
+    }
+
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.position.x, this.position.y, ...this.size);
+    }
+
+    move_pad_left() {
+        if (this.position.x > this.limit_left) {
+            this.position.x -= this.size[0] / 2;
+        }
+    }
+
+    move_pad_right() {
+        if (this.position.x < this.limit_right) {
+            this.position.x += this.size[0] / 2;
+        }
+    }
+}
+
 // Canvas -----------------------------------------------------------
-const canvas                    = document.getElementById("stage");
-const ctx                       = canvas.getContext("2d");
-ctx.fillStyle                   = "#FFFFFF";
+const canvas = document.getElementById("stage");
+const ctx = canvas.getContext("2d");
+function clean_canvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-// Game variables ---------------------------------------------------
-const ball_size                 = [10, 10];
-const pad_size                  = [100, 20];
-const initial_ball_speed        = 3;
-const initial_ball_direction    = {x: 1, y: 1};
-const pad_limit_left            = 0;
-const pad_limit_right           = canvas.width - pad_size[0];
-const ball_spawn_point          = {x: canvas.width / 2, y: 50};
-const initial_pad_position      = {x: canvas.width / 2, y: 550};
-
-let score                       = 0;
-let is_game_over                = false;
-let ball_can_bounce             = true;
-let ball_speed                  = initial_ball_speed;
-let ball_direction = {
-    x: initial_ball_direction.x,
-    y: initial_ball_direction.y
-};
-let ball_position = {
-    x: ball_spawn_point.x,
-    y: ball_spawn_point.y
-};
-let pad_position = {
-    x: initial_pad_position.x,
-    y: initial_pad_position.y
-};
+// Initialize elements ----------------------------------------------
+let pad = new Pad("#FFFFFF", 0);
+let ball = new Ball("#FFFFFF", 0, pad);
+let ball2 = new Ball("pink", 0, pad);
+let ball3 = new Ball("blue", 0, pad);
 
 // Inputs -----------------------------------------------------------
 document.addEventListener("keydown", function(e) {
     let key_code = e.which || e.keyCode;
 
-    if (key_code == 37) {        // left arrow
-        move_pad_left();
+    if (key_code == 37) { // left arrow
+        pad.move_pad_left();
     } else if (key_code == 39) { // right arrow
-        move_pad_right();
+        pad.move_pad_right();
     }
 });
 
@@ -45,136 +150,29 @@ document.getElementById("play-again").addEventListener("click", function() {
     replay();
 })
 
-// Move functions ---------------------------------------------------
-function move_pad_left() {
-    if (pad_position.x > pad_limit_left) {
-        pad_position.x -= pad_size[0] / 2;
-    }
-}
-
-function move_pad_right() {
-    if (pad_position.x < pad_limit_right) {
-        pad_position.x += pad_size[0] / 2;
-    }
-}
-
-function move_ball() {
-    ball_position.x = ball_position.x + ball_speed * ball_direction.x;
-    ball_position.y = ball_position.y + ball_speed * ball_direction.y;
-}
-
-// Game functions ------------------------------------------------
-function game_over() {
-    is_game_over = true;
-    document.getElementById("final-score").innerText = score;
-    document.getElementById("game-over").style = "display : inline";
-    document.getElementById("play-again").focus();
-}
-
+// Game functions ---------------------------------------------------
 function replay() {
-    score = 0;
-    ball_speed = initial_ball_speed;
-    // Spawn ball in random horizontal directions
-    ball_direction = {
-        x: Math.random() < 0.5 ? -1 : 1,
-        y: initial_ball_direction.y
-    };
-    // Spawn ball in random horizontal positions
-    ball_position = {
-        x: Math.floor(Math.random() * canvas.height - (2 * ball_size[0])) + ball_size[0],
-        y: ball_spawn_point.y
-    };
-    // Return pad to center
-    pad_position = {
-        x: initial_pad_position.x,
-        y: initial_pad_position.y
-    };
-    is_game_over = false;
+    pad = new Pad('blue', 0);
+    ball = new Ball('blue', 0, pad);
     document.getElementById("game-over").style = "display : none";
-    document.getElementById('score').innerHTML = score;
-    draw();
+    document.getElementById('score').innerHTML = ball.score;
+    process();
 }
 
-function increase_score_and_speed() {
-    score += 1;
-    if (score < 20) {
-        ball_speed += 0.5;
-    }
-    document.getElementById('score').innerHTML = score;
-}
-
-// Detect collision functions ---------------------------------------
-function detect_border_collision() {
-    const right_limit = canvas.width - ball_size[0]
-    if (ball_position.x < 0 || ball_position.x > right_limit) {
-        bounce_ball_horizontally();
-        ball_can_bounce = true;
-    }
-}
-
-function detect_top_collision() {
-    if (ball_position.y < 0) {
-        bounce_ball_vertically();
-    }
-}
-
-function detect_pad_collision() {
-    if (
-        ball_can_bounce &&
-        ball_position.y + ball_size[1] > pad_position.y &&
-        ball_position.y < pad_position.y + pad_size[1] &&
-        ball_position.x > pad_position.x &&
-        ball_position.x < pad_position.x + pad_size[0]
-    ) {
-        ball_can_bounce = false;
-        bounce_ball_vertically();
-        increase_score_and_speed();
-    }
-}
-
-function detect_game_over() {
-    if (ball_position.y > canvas.height) {
-        game_over();
-    }
-}
-
-// Bounce functions -------------------------------------------------
-function bounce_ball_horizontally() {
-    ball_direction.x = -ball_direction.x;
-}
-
-function bounce_ball_vertically() {
-    ball_direction.y = -ball_direction.y;
-}
-
-// Draw functions ---------------------------------------------------
-function clean_canvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function draw_ball() {
-    ctx.fillRect(ball_position.x, ball_position.y, ...ball_size);
-}
-
-function draw_pad() {
-    ctx.fillRect(pad_position.x, pad_position.y, ...pad_size);
-}
-
-function draw() {
-    if (is_game_over) {return;}
+function process() {
+    if (ball.is_game_over) {return;}
     clean_canvas();
-    // think();
-    detect_border_collision();
-    detect_top_collision();
-    detect_pad_collision();
-    move_ball();
-    detect_game_over();
-    draw_ball();
-    draw_pad();
-    requestAnimationFrame(draw);
+    ball.detect_border_collision();
+    ball.detect_top_collision();
+    ball.detect_pad_collision();
+    ball.move_ball();
+    ball.detect_game_over();
+    ball.draw();
+    pad.draw();
+    requestAnimationFrame(process);
 }
 
 // ------------------------------------------------------------------
 window.onload = function() {
-    draw();
+    process();
 }
