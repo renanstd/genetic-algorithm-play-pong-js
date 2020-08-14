@@ -89,7 +89,6 @@ class Ball
     }
 }
 
-
 class Pad
 {
     constructor(color, layer) {
