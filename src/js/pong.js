@@ -161,6 +161,7 @@ function replay() {
 function process() {
     if (ball.is_game_over) {return;}
     clean_canvas();
+    think();
     ball.detect_border_collision();
     ball.detect_top_collision();
     ball.detect_pad_collision();
