@@ -1,11 +1,11 @@
 // Variables --------------------------------------------------------
 const chromossome_size = 3;
 const population_size = 10;
-const max_generations = 500;
+const max_generations = 50;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
 const crossover_probability = 0.9; // 90%
-const mutation_probability = 0.05; // 05%
+const mutation_probability = 0.1; // 10%
 // ------------------------------------------------------------------
 
 /**
@@ -56,10 +56,15 @@ function create_initial_population() {
  * @param {Individual[]} population Um array de indivíduos
  */
 function calculate_fitness(population) {
+    let best_fitness = 0;
     for (let i = 0; i < population.length; i++) {
         const element = population[i];
         element.fitness = element.score;
+        if (element.fitness > best_fitness) {
+            best_fitness = element.fitness;
+        }
     }
+    console.log("Melhor fitness dessa população: " + best_fitness);
 }
 
 
@@ -123,8 +128,8 @@ function mutation(individual) {
     for (let i = 0; i < chromossome_size; i++) {
         const gene_selected = Math.random() < mutation_probability;
         if (gene_selected) {
+            console.log("Ocorreu mutação");
             mutated_chromossomes.push(Math.random());
-            console.log('mutate!');
         }
         mutated_chromossomes.push(individual.chromossomes[i]);
     }

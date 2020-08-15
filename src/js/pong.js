@@ -1,8 +1,9 @@
 class Ball
 {
-    constructor(color, layer, pad) {
+    constructor(pad) {
+        this.size = [10, 10];
         this.position = {
-            x: canvas.width / 2,
+            x: Math.floor(Math.random() * canvas.height - (2 * this.size[0])) + this.size[0],
             y: 50
         };
         this.speed = 3;
@@ -10,9 +11,7 @@ class Ball
             x: Math.random() < 0.5 ? -1 : 1,
             y: 1
         };
-        this.color = color;
-        this.layer = layer;
-        this.size = [10, 10];
+        this.color = pad.color;
         this.can_bounce = false;
         this.pad = pad;
         this.score = 0;
@@ -39,7 +38,7 @@ class Ball
 
     increase_score() {
         this.score += 1;
-        document.getElementById('score').innerHTML = this.score;
+        add_score_to_brain(this.pad.id);
     }
 
     increase_speed() {
@@ -64,9 +63,9 @@ class Ball
         if (
             this.can_bounce &&
             this.position.y + this.size[1] > this.pad.position.y &&
-            this.position.y < pad.position.y + this.pad.size[1] &&
-            this.position.x > pad.position.x &&
-            this.position.x < pad.position.x + this.pad.size[0]
+            this.position.y < this.pad.position.y + this.pad.size[1] &&
+            this.position.x > this.pad.position.x &&
+            this.position.x < this.pad.position.x + this.pad.size[0]
         ) {
             this.can_bounce = false;
             this.bounce_ball_vertically();
@@ -83,21 +82,18 @@ class Ball
 
     game_over() {
         this.is_game_over = true;
-        document.getElementById("final-score").innerText = this.score;
-        document.getElementById("game-over").style = "display : inline";
-        document.getElementById("play-again").focus();
     }
 }
 
 class Pad
 {
-    constructor(color, layer) {
+    constructor(id, color) {
+        this.id = id;
         this.position = {
             x: canvas.width / 2,
             y: 550
         };
         this.color = color;
-        this.layer = layer;
         this.size = [100, 20];
         this.limit_left = 0;
         this.limit_right = canvas.width - this.size[0];
@@ -128,51 +124,27 @@ function clean_canvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Initialize elements ----------------------------------------------
-let pad = new Pad("#FFFFFF", 0);
-let ball = new Ball("#FFFFFF", 0, pad);
-let ball2 = new Ball("pink", 0, pad);
-let ball3 = new Ball("blue", 0, pad);
-
-// Inputs -----------------------------------------------------------
-document.addEventListener("keydown", function(e) {
-    let key_code = e.which || e.keyCode;
-
-    if (key_code == 37) { // left arrow
-        pad.move_pad_left();
-    } else if (key_code == 39) { // right arrow
-        pad.move_pad_right();
-    }
-});
-
-document.getElementById("play-again").addEventListener("click", function() {
-    replay();
-})
-
-// Game functions ---------------------------------------------------
-function replay() {
-    pad = new Pad('blue', 0);
-    ball = new Ball('blue', 0, pad);
-    document.getElementById("game-over").style = "display : none";
-    document.getElementById('score').innerHTML = ball.score;
-    process();
-}
-
+// Game loop --------------------------------------------------------
 function process() {
-    if (ball.is_game_over) {return;}
     clean_canvas();
-    think();
-    ball.detect_border_collision();
-    ball.detect_top_collision();
-    ball.detect_pad_collision();
-    ball.move_ball();
-    ball.detect_game_over();
-    ball.draw();
-    pad.draw();
+    const generation_over = players.every(function(player) {
+        return player.ball.is_game_over;
+    });
+    if (generation_over) {
+        end_generation();
+        return;
+    }
+    for (let i = 0; i < players.length; i++) {
+        const player = players[i];
+        if (player.ball.is_game_over) {continue}
+        player.ball.detect_border_collision();
+        player.ball.detect_top_collision();
+        player.ball.detect_pad_collision();
+        player.ball.move_ball();
+        player.ball.detect_game_over();
+        player.brain.think();
+        player.ball.draw();
+        player.pad.draw();
+    }
     requestAnimationFrame(process);
-}
-
-// ------------------------------------------------------------------
-window.onload = function() {
-    process();
 }
