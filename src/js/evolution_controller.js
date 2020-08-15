@@ -45,7 +45,7 @@ function add_score_to_brain(id) {
 
 function end_generation() {
     generation += 1;
-    console.log("Generation: " + generation);
+    console.log("Geração: " + generation);
     if (generation < max_generations) {
         players = evolve(players);
         process();

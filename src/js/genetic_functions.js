@@ -1,11 +1,11 @@
 // Variables --------------------------------------------------------
-const chromossome_size = 3;
+const chromossome_size = 4;
 const population_size = 10;
 const max_generations = 200;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
 const crossover_probability = 0.9; // 90%
-const mutation_probability = 0.1; // 10%
+const mutation_probability = 0.05; // 5%
 // ------------------------------------------------------------------
 
 /**
@@ -108,8 +108,9 @@ function selection(population) {
 function crossover(father, mother) {
     const new_chromossome = [];
     new_chromossome.push(father.chromossomes[0]);
-    new_chromossome.push(mother.chromossomes[1]);
-    new_chromossome.push(father.chromossomes[2]);
+    new_chromossome.push(father.chromossomes[1]);
+    new_chromossome.push(mother.chromossomes[2]);
+    new_chromossome.push(mother.chromossomes[3]);
     return new Individual(new_chromossome);
 }
 
