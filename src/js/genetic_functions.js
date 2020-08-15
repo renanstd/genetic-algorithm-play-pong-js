@@ -128,7 +128,6 @@ function mutation(individual) {
     for (let i = 0; i < chromossome_size; i++) {
         const gene_selected = Math.random() < mutation_probability;
         if (gene_selected) {
-            console.log("Ocorreu mutação");
             mutated_chromossomes.push(Math.random());
         }
         mutated_chromossomes.push(individual.chromossomes[i]);
