@@ -13,7 +13,7 @@ class Brain
         soma += this.ball.position.y / 600 * this.individual.chromossomes[1];
         soma += this.ball.pad.position.x / 600 * this.individual.chromossomes[2];
         soma += this.ball.speed / 12.5 * this.individual.chromossomes[3];
-        // soma = soma / this.individual.chromossomes.length;
+        soma = soma / 2.0;
 
         // Divido 1.0 por 3 para termos assim 3 possíveis outputs em faixas de 0.33 cada
         if (soma <= 0.33) {

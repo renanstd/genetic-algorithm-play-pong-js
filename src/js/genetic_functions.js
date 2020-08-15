@@ -1,7 +1,7 @@
 // Variables --------------------------------------------------------
 const chromossome_size = 4;
 const population_size = 10;
-const max_generations = 200;
+const max_generations = 100;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
 const crossover_probability = 0.9; // 90%
