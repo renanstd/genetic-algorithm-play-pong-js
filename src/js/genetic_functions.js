@@ -1,7 +1,6 @@
 // Variables --------------------------------------------------------
 const chromossome_size = 4;
 const population_size = 10;
-const max_generations = 100;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
 const crossover_probability = 0.9; // 90%
@@ -12,7 +11,7 @@ const mutation_probability = 0.05; // 5%
  * Classe que representa um indivíduo, que será inserido no
  * cérebro para jogar o pong.
  * Cada indivíduo possui um cromossomo, que por sua vez é um
- * conjunto de 3 genes.
+ * conjunto de n genes.
  * Cada indivíduo possui uma variável para guardar sua pontuação
  * no jogo, e uma variável para armazenar seu valor de fitness.
  */
@@ -36,6 +35,7 @@ function create_initial_population() {
     const population = [];
     for (let i = 0; i < population_size; i++) {
         const chromossomes = [];
+        // TODO: isolar esse laço em uma função separada que cria o cromossomo
         for (let j = 0; j < chromossome_size; j++) {
             const random_value = Math.random();
             chromossomes.push(random_value);

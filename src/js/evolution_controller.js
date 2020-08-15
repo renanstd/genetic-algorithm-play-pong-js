@@ -13,6 +13,7 @@ const colors = [
 ];
 
 const population = create_initial_population();
+const max_generations = 100;
 let generation = 1;
 let players = setup_game(population);
 

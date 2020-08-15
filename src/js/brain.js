@@ -19,9 +19,9 @@ class Brain
         if (soma <= 0.33) {
             this.ball.pad.move_pad_left();
         } else if (soma > 0.33 && soma <= 0.66) {
-            this.ball.pad.move_pad_right();
+            // dont move
         } else {
-            // Don't move pad
+            this.ball.pad.move_pad_right();
         }
     }
 }

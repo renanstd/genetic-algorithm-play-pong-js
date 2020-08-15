@@ -97,6 +97,7 @@ class Pad
         this.size = [100, 20];
         this.limit_left = 0;
         this.limit_right = canvas.width - this.size[0];
+        this.move_distance = 10;
     }
 
     draw() {
@@ -106,13 +107,13 @@ class Pad
 
     move_pad_left() {
         if (this.position.x > this.limit_left) {
-            this.position.x -= this.size[0] / 2;
+            this.position.x -= this.move_distance;
         }
     }
 
     move_pad_right() {
         if (this.position.x < this.limit_right) {
-            this.position.x += this.size[0] / 2;
+            this.position.x += this.move_distance;
         }
     }
 }
