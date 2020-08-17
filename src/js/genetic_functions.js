@@ -5,6 +5,7 @@ const selection_method = 'tournament_selection';
 const tournament_size = 3;
 const crossover_probability = 0.9; // 90% (essa variável não está sendo usada)
 const mutation_probability = 0.05; // 5%
+const elitism_rate = 20; // 20%
 // ------------------------------------------------------------------
 
 /**
@@ -65,6 +66,26 @@ function calculate_fitness(population) {
         }
     }
     console.log("Melhor fitness dessa população: " + best_fitness);
+}
+
+
+/**
+ * Essa função efetua o elitismo.
+ * Ela recebe uma população, com cada indivíduo tendo seu fitness,
+ * e seleciona os n melhores indivíduos para serem replicados na
+ * geração seguinte, sem sofrer crossover nem mutação.
+ *
+ * @param {Individual[]} population Um array de indivíduos
+ * @returns {Individual[]} Um array de indivíduos selecionados
+ */
+function elitism(population) {
+    // Ordena seus indivíduos pelo valor de seus fitness
+    const ordered_individuals = population.sort(function(a, b) {
+        return b.fitness - a.fitness;
+    });
+    // Seleciona os n indivíduos (baseado na taxa de elitismo)
+    const individuals_to_select = Math.floor(population.length / 100 * elitism_rate);
+    return ordered_individuals.slice(0, individuals_to_select);
 }
 
 

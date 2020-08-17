@@ -48,19 +48,22 @@ function end_generation() {
     }
 }
 
-function evolve() {
+function evolve(players) {
     const population = players.map(function(player) {
         return player.brain.individual;
     });
     const new_individuals = [];
+    const elitism_individuals = elitism(players);
+    const elitism_number = Math.floor(population.length / 100 * elitism_rate);
     calculate_fitness(population);
-    while (new_individuals.length < population_size) {
+    while (new_individuals.length < population_size - elitism_number) {
         const father = selection(population);
         const mother = selection(population);
         const child = crossover(father, mother);
         mutation(child);
         new_individuals.push(child);
     }
+    new_individuals.concat(elitism_individuals);
     const new_players = setup_game(new_individuals);
     return new_players;
 }
