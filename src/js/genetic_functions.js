@@ -3,7 +3,7 @@ const chromossome_size = 4;
 const population_size = 10;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
-const crossover_probability = 0.9; // 90%
+const crossover_probability = 0.9; // 90% (essa variável não está sendo usada)
 const mutation_probability = 0.05; // 5%
 // ------------------------------------------------------------------
 

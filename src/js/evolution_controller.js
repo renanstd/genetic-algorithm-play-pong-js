@@ -37,13 +37,6 @@ function setup_game(population) {
     return players;
 }
 
-function add_score_to_brain(id) {
-    const target = players.filter(function(player) {
-        return player.brain.id == id;
-    })
-    target[0].brain.individual.score += 1;
-}
-
 function end_generation() {
     generation += 1;
     console.log("Geração: " + generation);
