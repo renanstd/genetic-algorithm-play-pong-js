@@ -4,6 +4,7 @@ class Brain
         this.id = id;
         this.ball = ball;
         this.individual = individual;
+        this.score = 0;
     }
 
     think() {
@@ -13,8 +14,8 @@ class Brain
         // Divido o valor de input pelo seu limite máximo para normalizar entre 0 e 1
         soma += (distance_x / 600) * this.individual.chromossomes[0];
         soma += (distance_y / 600) * this.individual.chromossomes[1];
-        soma += (this.ball.pad.position.x / 600) * this.individual.chromossomes[2];
-        soma += (this.ball.speed / 12.5) * this.individual.chromossomes[3];
+        // soma += (this.ball.pad.position.x / 600) * this.individual.chromossomes[2];
+        soma += (this.ball.speed / 12.5) * this.individual.chromossomes[2];
 
         // Divido 1.0 por 3 para termos assim 3 possíveis outputs em faixas de 0.33 cada
         if (soma <= 0.33) {

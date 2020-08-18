@@ -1,5 +1,5 @@
 // Variables --------------------------------------------------------
-const chromossome_size = 4;
+const chromossome_size = 3;
 const population_size = 10;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
@@ -35,16 +35,26 @@ class Individual
 function create_initial_population() {
     const population = [];
     for (let i = 0; i < population_size; i++) {
-        const chromossomes = [];
-        // TODO: isolar esse laço em uma função separada que cria o cromossomo
-        for (let j = 0; j < chromossome_size; j++) {
-            const random_value = Math.random();
-            chromossomes.push(random_value);
-        }
-        const individual = new Individual(chromossomes);
+        const chromossome = create_chromossome();
+        const individual = new Individual(chromossome);
         population.push(individual);
     }
     return population;
+}
+
+
+/**
+ * Cria um cromossomo inicial com valores aleatórios
+ *
+ * @returns {Array} Um cromossomo gerado randomicamente.
+ */
+function create_chromossome() {
+    const chromossome = [];
+    for (let j = 0; j < chromossome_size; j++) {
+        const random_value = Math.random();
+        chromossome.push(random_value);
+    }
+    return chromossome
 }
 
 
@@ -79,13 +89,18 @@ function calculate_fitness(population) {
  * @returns {Individual[]} Um array de indivíduos selecionados
  */
 function elitism(population) {
+    const selected_individuals = [];
     // Ordena seus indivíduos pelo valor de seus fitness
     const ordered_individuals = population.sort(function(a, b) {
         return b.fitness - a.fitness;
     });
     // Seleciona os n indivíduos (baseado na taxa de elitismo)
     const individuals_to_select = Math.floor(population.length / 100 * elitism_rate);
-    return ordered_individuals.slice(0, individuals_to_select);
+    for (let i = 0; i < individuals_to_select; i++) {
+        const individual = new Individual(ordered_individuals[i].chromossomes);
+        selected_individuals.push(individual);
+    }
+    return selected_individuals;
 }
 
 
@@ -120,18 +135,29 @@ function selection(population) {
 
 
 /**
- * Realiza o cruzamento entre 2 indivíduos, e retorna o filho deles
+ * Realiza o cruzamento entre 2 indivíduos, e retorna o filho deles.
+ * Este modelo de cruzamento irá sempre alternar entre os cromossomos
+ * do pai e da mãe.
+ * Exemplo:
+ * pai:   [1, 1, 1, 1]
+ * mae:   [0, 0, 0, 0]
+ * filho: [1, 0, 1, 0]
  *
  * @param {Individual} father Indivíduo A
  * @param {Individual} mother Indivíduo B
  * @returns {Individual} Filho resultante
  */
 function crossover(father, mother) {
+    let choose_from_father = true;
     const new_chromossome = [];
-    new_chromossome.push(father.chromossomes[0]);
-    new_chromossome.push(father.chromossomes[1]);
-    new_chromossome.push(mother.chromossomes[2]);
-    new_chromossome.push(mother.chromossomes[3]);
+    for (let i = 0; i < chromossome_size; i++) {
+        if (choose_from_father) {
+            new_chromossome.push(father.chromossomes[i]);
+            choose_from_father = !choose_from_father;
+        } else {
+            new_chromossome.push(mother.chromossomes[i]);
+        }
+    }
     return new Individual(new_chromossome);
 }
 

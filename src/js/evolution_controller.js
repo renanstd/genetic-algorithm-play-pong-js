@@ -49,21 +49,25 @@ function end_generation() {
 }
 
 function evolve(players) {
+    // Remove os indivíduos dos cérebros
     const population = players.map(function(player) {
         return player.brain.individual;
     });
-    const new_individuals = [];
-    const elitism_individuals = elitism(players);
-    const elitism_number = Math.floor(population.length / 100 * elitism_rate);
+    // Calcula o fitness dessa galera
     calculate_fitness(population);
-    while (new_individuals.length < population_size - elitism_number) {
+    // Seleciona os melhores indivíduos para o elitismo
+    const elitism_individuals = elitism(population);
+    // Começa a seleção e criação de novos indivíduos
+    let new_individuals = [];
+    while (new_individuals.length < population_size - elitism_individuals.length) {
         const father = selection(population);
         const mother = selection(population);
         const child = crossover(father, mother);
         mutation(child);
         new_individuals.push(child);
     }
-    new_individuals.concat(elitism_individuals);
+    // Adiciona a galera do elitismo selecionada anteriormente
+    new_individuals = new_individuals.concat(elitism_individuals);
     const new_players = setup_game(new_individuals);
     return new_players;
 }
