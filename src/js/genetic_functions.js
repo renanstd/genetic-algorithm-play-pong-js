@@ -1,5 +1,5 @@
 // Variables --------------------------------------------------------
-const chromossome_size = 3;
+const chromossome_size = 2;
 const population_size = 10;
 const selection_method = 'tournament_selection';
 const tournament_size = 3;
